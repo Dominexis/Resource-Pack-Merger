@@ -10,21 +10,21 @@ path = os.path.dirname(os.path.realpath(__file__))
 
 
 # Delete contents of current resource pack
-dest_rp_dir = os.path.join(path, "Dom's Nexus Resource Pack - By Dominexis", "assets")
+dest_rp_dir = os.path.join(path, "Dom's Nexus RP - By Dominexis", "assets")
 if os.path.exists(dest_rp_dir):
     shutil.rmtree(dest_rp_dir)
 
 
 
 # Create pack.mcmeta
-if not os.path.exists(os.path.join(path, "Dom's Nexus Resource Pack - By Dominexis")):
-    os.makedirs(os.path.join(path, "Dom's Nexus Resource Pack - By Dominexis"))
-with open(os.path.join(path, "Dom's Nexus Resource Pack - By Dominexis", "pack.mcmeta"), "w", encoding="utf-8") as file:
+if not os.path.exists(os.path.join(path, "Dom's Nexus RP - By Dominexis")):
+    os.makedirs(os.path.join(path, "Dom's Nexus RP - By Dominexis"))
+with open(os.path.join(path, "Dom's Nexus RP - By Dominexis", "pack.mcmeta"), "w", encoding="utf-8") as file:
     file.write(
         "{\n" +
         "    \"pack\": {\n" +
         "        \"pack_format\": 9,\n" +
-        "        \"description\": \"§9§lDom's Nexus\\n§7By §9Dominexis §7- §61.10.x\"\n" +
+        "        \"description\": \"§9§lDom's Nexus\\n§7By §9Dominexis §7- §61.10.2+\"\n" +
         "    }\n" +
         "}"
     )
@@ -117,10 +117,27 @@ for rp in rp_list:
                         else:
                             existing_contents = existing_contents[:-1] + ",\"overrides\":[" + new_overrides + "]}"
 
+                        # Put indents into file
+                        indent_level = 0
+                        contents = ""
+                        in_string = False
+                        for char in existing_contents:
+                            if char in ["]", "}"]:
+                                indent_level -= 1
+                                contents += "\n" + indent_level * "\t"
+                            contents += char
+                            if char == ":" and not in_string:
+                                contents += " "
+                            elif char in ["[", "{", ","]:
+                                if char in ["[", "{"]:
+                                    indent_level += 1
+                                contents += "\n" + indent_level * "\t"
+                            elif char == "\"":
+                                in_string = not in_string
+
                         # Save contents to existing file
                         with open(os.path.join(dest_rp_subdir, file_name), "w", encoding="utf-8") as file:
-                            file.write(existing_contents)
-
+                            file.write(contents)
 
                 # Overwrite file otherwise
                 else:
@@ -130,8 +147,10 @@ for rp in rp_list:
     print(rp + " has been merged.")
 
     # Create file that lists off the constituent packs
-    with open(os.path.join(path, "Dom's Nexus Resource Pack - By Dominexis", "Constituent Packs.txt"), "w", encoding="utf-8") as file:
+    with open(os.path.join(path, "Dom's Nexus RP - By Dominexis", "Constituent Packs.txt"), "w", encoding="utf-8") as file:
         file.write("\n".join(rp_list_output))
+
+
 
 # Tell that merging is complete
 print("\nResource pack merging complete.")
